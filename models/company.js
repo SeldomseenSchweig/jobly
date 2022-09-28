@@ -80,7 +80,7 @@ class Company {
   }
 
     
-const companiesRes = 
+const companiesRes = await db.query(
         `SELECT handle,
                 name,
                 description,
@@ -89,14 +89,13 @@ const companiesRes =
          FROM companies
          WHERE name LIKE $1
          AND num_employees > $2 
-         ORDER BY name`;
+         ORDER BY name`,[...values] );
         
 
 
-        const result = await db.query(companiesRes, [...values]);
-        console.log(result)
+        // const result = await db.query(companiesRes, [...values]);
 
-return result.rows[0];
+return companiesRes.rows;
 
 
     }
