@@ -67,30 +67,36 @@ class Company {
 
     }
 
-//    const cols = keys.map((colName, idx) =>
-//     `"${colName}"=$${idx + 1}`,
-// );
+   const cols = keys.map((colName, idx) =>
+    `"${colName}"=$${idx + 1}`);
 
 
-//   let setCols = cols.join(", ")
-//   let values = Object.values(query)
-//   // const result = await db.query(companiesRes, [...values, handle]);
-//   console.log(setCols)
+  let setCols = cols.join(", ")
+  let values = Object.values(query)
+  // const result = await db.query(companiesRes, [...values, handle]);
+  console.log(setCols, values)
+  if(query.name){
+    query.name = `%${query.name}%`
+  }
 
     
-const companiesRes = await db.query(
+const companiesRes = 
         `SELECT handle,
                 name,
                 description,
                 num_employees AS "numEmployees",
                 logo_url AS "logoUrl"
          FROM companies
-         WHERE name LIKE $1 
-         AND num_employees < $2
-         ORDER BY name`, [`%${query.name}%`], query.minEmployees );
+         WHERE name LIKE $1
+         AND num_employees > $2 
+         ORDER BY name`;
+        
 
 
-return companiesRes.rows;
+        const result = await db.query(companiesRes, [...values]);
+        console.log(result)
+
+return result.rows[0];
 
 
     }
