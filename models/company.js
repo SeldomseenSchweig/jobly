@@ -2,7 +2,7 @@
 
 const req = require("express/lib/request");
 const db = require("../db");
-const { BadRequestError, NotFoundError } = require("../expressError");
+const { BadRequestError, NotFoundError, ExpressError } = require("../expressError");
 const { sqlForPartialUpdate } = require("../helpers/sql");
 
 /** Related functions for companies. */
@@ -51,10 +51,10 @@ class Company {
    * */
 
   static async findAll(query) {
+ 
 
-    const keys = Object.keys(query);
+    
 
-    if(keys.length==0){
       const companiesRes = await db.query(
         `SELECT handle,
                 name,
@@ -63,39 +63,78 @@ class Company {
                 logo_url AS "logoUrl"
          FROM companies
          ORDER BY name`);
+         console.log(companiesRes.rows)
     return companiesRes.rows;
-
-    }
-
-   const cols = keys.map((colName, idx) =>
-    `"${colName}"=$${idx + 1}`);
-
-
-  let setCols = cols.join(", ")
-  let values = Object.values(query)
-  // const result = await db.query(companiesRes, [...values, handle]);
-  console.log(setCols, values)
-  if(query.name){
-    query.name = `%${query.name}%`
-  }
-
     
+    /**  This section iterates through the 
+     query-string-variable and creates a string for the
+     WHERE secton of the sql query and an array for the 
+     values sanitizing section of the SQL query **/
+
+    let values = []
+    let cols = ""
+    values.length = Object.values(query).length-1
+    if(query.min > query.max){
+      throw new ExpressError(`Your minimum employees (${query.min_employees})
+        must be fewer than you maximum employees(${query.max_employees})`, 404)
+    }
+   keys.map((colName, idx) => 
+   {
+     if( colName === "name"){
+      cols+=(`LOWER(name) LIKE $${idx + 1}`)
+       values[idx] = `%${query[colName].toLowerCase()}%`
+
+     }else if(colName === 'min_employees'){
+       if(query.name){
+        cols+=`AND num_employees > $${idx + 1} `
+        values[idx] = Number(query[colName])
+       }else{
+        cols+=`num_employees > $${idx + 1}`
+        values[idx] = Number(query[colName])
+
+       }
+
+     }else if(colName === 'max_employees' ){
+      if( query.name || query.min_employees){
+        cols+=` AND num_employees < $${idx + 1}`
+        values[idx] = Number(query[colName])
+
+      }else{
+        cols+=`num_employees < $${idx + 1}`
+        values[idx] = Number(query[colName])
+      }
+
+     }
+    
+  });
+  
+
+if(query.min_employees || query.max_employees){
+  const companiesRes = await db.query(
+    `SELECT handle,
+            name,
+            description,
+            num_employees AS "numEmployees",
+            logo_url AS "logoUrl"
+     FROM companies
+     WHERE ${cols} 
+     ORDER BY name`, values);
+    
+return companiesRes.rows;
+
+}else{
+
 const companiesRes = await db.query(
         `SELECT handle,
                 name,
                 description,
-                num_employees AS "numEmployees",
                 logo_url AS "logoUrl"
          FROM companies
-         WHERE name LIKE $1
-         AND num_employees > $2 
-         ORDER BY name`,[...values] );
-        
-
-
-        // const result = await db.query(companiesRes, [...values]);
+         WHERE ${cols} 
+         ORDER BY name`, values);
 
 return companiesRes.rows;
+  }
 
 
     }
