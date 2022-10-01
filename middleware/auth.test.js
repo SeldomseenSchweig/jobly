@@ -11,6 +11,8 @@ const {
 const { SECRET_KEY } = require("../config");
 const testJwt = jwt.sign({ username: "test", isAdmin: false }, SECRET_KEY);
 const badJwt = jwt.sign({ username: "test", isAdmin: false }, "wrong");
+// const testAdminJwt = jwt.sign({ username: "testAdmin", isAdmin: false }, SECRET_KEY);
+
 
 
 describe("authenticateJWT", function () {
