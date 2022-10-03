@@ -25,21 +25,22 @@ class Job {
 //       REFERENCES companies ON DELETE CASCADE
 //   );
 
-  static async create({id, title, salary, equity, company_handle }) {
-    const duplicateCheck = await db.query(
-          `SELECT title, salary, equity, company_handle,
-           FROM jobs
-           WHERE id =$1`,
-        [id,title, salary, equity, company_handle]);
+  static async create({title, salary, equity, company_handle }) {
+    //  I don't think there has to be a dupe check, there can be more than one job with the same descriptors
+    //  const duplicateCheck = await db.query(
+    //       `SELECT title, salary, equity, company_handle,
+    //        FROM jobs
+    //        WHERE id =$1`,
+    //     [title, salary, equity, company_handle]);
 
-    if (duplicateCheck.rows[0])
-      throw new BadRequestError(`Duplicate job: id ${id}`);
+    // if (duplicateCheck.rows[0])
+    //   throw new BadRequestError(`Duplicate job: id ${id}`);
 
     const result = await db.query(
           `INSERT INTO jobs
-           (title, salary, equity, company_handlel)
+           (title, salary, equity, company_handle)
            VALUES ($1, $2, $3, $4)
-           RETURNING title, salary, equity, company_handle"`,
+           RETURNING title, salary, equity, company_handle`,
         [
             title, salary, equity, company_handle
         ],
@@ -59,7 +60,7 @@ class Job {
     if(!query){
 
         const jobRes = await db.query(
-            `SELECT title, salary, equity, company_handle
+            `SELECT id, title, salary, equity, company_handle
              FROM jobs
              ORDER BY title`);
             return jobRes.rows;
@@ -100,11 +101,11 @@ class Job {
      }else if(colName === 'hasEquity' ){
       if( query.name || query.min_salary){
         cols+=` AND has_equity = $${idx + 1}`
-        values[idx] = query[colName]
+        values[idx] = Number(query[colName])
 
       }else{
         cols+=`has_equity = $${idx + 1}`
-        values[idx] = query[colName]
+        values[idx] = Number(query[colName])
       }
 
      }
@@ -149,16 +150,16 @@ return jobRes.rows;
           `SELECT title, salary, equity, company_handle
            FROM jobs
            WHERE id = $1`,
-        [handle]);
+        [id]);
 
     const job = jobRes.rows[0];
 
-    if (!job) throw new NotFoundError(`No company: ${handle}`);
+    if (!job) throw new NotFoundError(`No job: ${id}`);
 
     return job;
   }
 
-  /** Update company data with `data`.
+  /** Update job data with `data`.
    *
    * This is a "partial update" --- it's fine if data doesn't contain all the
    * fields; this only changes provided ones.
@@ -192,16 +193,29 @@ return jobRes.rows;
    **/
 
   static async remove(id) {
+
+    const jobRes = await db.query(
+      `SELECT id, title, salary, equity, company_handle
+       FROM jobs
+       WHERE id = $1`,[id]);
+
+
+
+
+    if (!jobRes.rows[0]) throw new NotFoundError(`No job: ${id}`);
+
     const result = await db.query(
           `DELETE
            FROM jobs
            WHERE id = $1`,
         [id]);
-    const company = result.rows[0];
+        return result
 
-    if (!company) throw new NotFoundError(`No company: ${id}`);
+
+
+
   }
 }
 
 
-module.exports = Company;
+module.exports = Job;
