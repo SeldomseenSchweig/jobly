@@ -51,10 +51,10 @@ class Company {
    * */
 
   static async findAll(query) {
- 
+    console.log(query)
 
-    
 
+    if(Object.keys(query).length === 0){
       const companiesRes = await db.query(
         `SELECT handle,
                 name,
@@ -64,7 +64,11 @@ class Company {
          FROM companies
          ORDER BY name`);
          console.log(companiesRes.rows)
-    return companiesRes.rows;
+         return companiesRes.rows;
+
+
+    }
+
     
     /**  This section iterates through the 
      query-string-variable and creates a string for the
@@ -74,7 +78,8 @@ class Company {
     let values = []
     let cols = ""
     values.length = Object.values(query).length-1
-    if(query.min > query.max){
+    let keys = Object.keys(query)
+    if(query.min_employees > query.max_employees){
       throw new ExpressError(`Your minimum employees (${query.min_employees})
         must be fewer than you maximum employees(${query.max_employees})`, 404)
     }
@@ -132,7 +137,7 @@ const companiesRes = await db.query(
          FROM companies
          WHERE ${cols} 
          ORDER BY name`, values);
-
+         
 return companiesRes.rows;
   }
 
