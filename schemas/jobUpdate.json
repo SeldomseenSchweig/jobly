@@ -4,8 +4,7 @@
     "type": "object",
     "default": {},
     "required": [
-        "title",
-        "company_handle"
+        "title"
     ],
     "properties": {
         "title": {

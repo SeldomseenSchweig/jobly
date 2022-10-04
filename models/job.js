@@ -45,10 +45,6 @@ class Job {
             title, salary, equity, company_handle
         ],
     );
-    console.log( "+++++++++++++++++++++++")
-    console.log( result)
-    console.log( "+++++++++++++++++++++++")
-
     const job = result.rows[0];
 
     return job;
@@ -183,10 +179,10 @@ return jobRes.rows;
    */
 
   static async update(id, data) {
-    let company_handle
+     let title
     const { setCols, values } = sqlForPartialUpdate(data,
       {
-        company_handle
+        title
       });
     const idVarIdx = "$" + (values.length + 1);
 

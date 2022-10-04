@@ -62,7 +62,6 @@ class Company {
                 logo_url AS "logoUrl"
          FROM companies
          ORDER BY name`);
-         console.log(companiesRes.rows)
          return companiesRes.rows;
 
 
@@ -153,6 +152,7 @@ return companiesRes.rows;
    **/
 
   static async get(handle) {
+
     const companyRes = await db.query(
           `SELECT handle,
                   name,
@@ -162,8 +162,23 @@ return companiesRes.rows;
            FROM companies
            WHERE handle = $1`,
         [handle]);
+        console.log("+++++++++++++++++++++++++")
+        console.log("+++++++++++++++++++++++++")
+        console.log(handle)
+        console.log("+++++++++++++++++++++++++")
+        const jobRes = await db.query(
+          `SELECT id,
+                  title,
+                  equity,
+                  salary,
+           FROM jobs
+           WHERE company_handle = $1`
+        [handle]);
+
+
 
     const company = companyRes.rows[0];
+
 
     if (!company) throw new NotFoundError(`No company: ${handle}`);
 
