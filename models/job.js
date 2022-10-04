@@ -185,7 +185,7 @@ return jobRes.rows;
     const querySql = `UPDATE jobs 
                       SET ${setCols} 
                       WHERE id = ${idVarIdx} 
-                      RETURNING title, salary, equity, company_handle"`;
+                      RETURNING title, salary, equity, company_handle`;
     const result = await db.query(querySql, [...values, id]);
     const job = result.rows[0];
 
