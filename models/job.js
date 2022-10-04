@@ -139,20 +139,27 @@ return jobRes.rows;
 
   /** Given a job id, return data about job.
    *
-   * Returns { handle, name, description, numEmployees, logoUrl, jobs }
-   *   where jobs is [{ id, title, salary, equity, companyHandle }, ...]
+   * Returns { title, salary, equity company_handle }
+   *   where jobs is [{ id, title, salary, equity, company_handle }, ...]
    *
    * Throws NotFoundError if not found.
    **/
 
   static async get(id) {
+    if(typeof id != "number"){
+      throw new NotFoundError(` Id must be a number: ${id}`)
+
+    }
     const jobRes = await db.query(
           `SELECT title, salary, equity, company_handle
            FROM jobs
            WHERE id = $1`,
         [id]);
+        
 
     const job = jobRes.rows[0];
+
+
 
     if (!job) throw new NotFoundError(`No job: ${id}`);
 
@@ -198,9 +205,6 @@ return jobRes.rows;
       `SELECT id, title, salary, equity, company_handle
        FROM jobs
        WHERE id = $1`,[id]);
-
-
-
 
     if (!jobRes.rows[0]) throw new NotFoundError(`No job: ${id}`);
 

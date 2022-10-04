@@ -8,12 +8,16 @@ const {
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
+  id
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
 beforeEach(commonBeforeEach);
 afterEach(commonAfterEach);
 afterAll(commonAfterAll);
+
+
+
 
 /************************************** create */
 
@@ -27,17 +31,20 @@ describe("create", function () {
 
   test("works", async function () {
     let job = await Job.create(newJob);
+   
+
     expect(job).toEqual({
     title: "new",
     salary: 1000,
-    equity: 0.4,
+    equity: '0.4',
     company_handle: 'c3',
   });
+  
 
     const result = await db.query(
           `SELECT title, equity, salary, company_handle
            FROM jobs
-           WHERE id = ${job.id}`);
+           WHERE title = 'new'`);
     expect(result.rows).toEqual([
       {
         title: "new",
@@ -94,20 +101,29 @@ describe("findAll", function () {
 /************************************** get */
 
 describe("get", function () {
+  
   test("works", async function () {
-    let job = await Job.get(1);
-    expect(job).toEqual({
-      id: 1,
-      title: "j1",
-      equity: .1,
-      salary: 1000,
-      company_handle: 'c1',
+    const jobRes = await db.query(
+      `SELECT *
+       FROM jobs`);
+    const job = jobRes.rows[0]
+    let job1 = await Job.get(job.id);
+    expect(job1).toEqual({
+      title: job.title,
+      equity: job.equity,
+      salary: job.salary,
+      company_handle:job.company_handle
     });
   });
 
   test("not found if no such Job", async function () {
     try {
-      await Job.get("nope");
+
+  
+       let result = await Job.get("nope");
+       console.log('+++++++++++++++++++++++++++++')
+       console.log(result)
+       console.log('+++++++++++++++++++++++++++++')
       fail();
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();
@@ -120,13 +136,17 @@ describe("get", function () {
 describe("update", function () {
 
   const updateData = {
-    title: "New",
+    title: "NewTitle",
     equity: 0.1,
     salary: 4000,
     company_handle:'c3',
   };
 
   test("works", async function () {
+    const jobRes = await db.query(
+      `SELECT *
+       FROM jobs`);
+    const id = jobRes.rows[0].id
 
 
     let job = await Job.update(id, updateData);
