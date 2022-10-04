@@ -179,14 +179,23 @@ return jobRes.rows;
    */
 
   static async update(id, data) {
-    const { setCols, values } = sqlForPartialUpdate(data);
+    let company_handle
+    const { setCols, values } = sqlForPartialUpdate(data,
+      {
+        company_handle
+      });
     const idVarIdx = "$" + (values.length + 1);
 
     const querySql = `UPDATE jobs 
                       SET ${setCols} 
                       WHERE id = ${idVarIdx} 
-                      RETURNING title, salary, equity, company_handle`;
+                      RETURNING id, title, salary, equity, company_handle`;
     const result = await db.query(querySql, [...values, id]);
+    console.log("+++++++++++++++++++++++++++")
+    console.log(querySql,[...values, id])
+    console.log("+++++++++++++++++++++++++++")
+
+    
     const job = result.rows[0];
 
     if (!job) throw new NotFoundError(`No job: ${id}`);

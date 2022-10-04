@@ -34,15 +34,15 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
 
   // {firstName: 'Aliya', age: 32} => ['"first_name"=$1', '"age"=$2']
   const cols2 = []
+
   let cols = keys.map((colName, idx) =>
    
-  
       `"${jsToSql[colName] || colName}"=$${idx + 1}`,
       // cols2.push(`"${colName}"=$${idx + 1}`)
       // console.log(cols2)
       
   );
-  // console.log(cols2)
+  console.log(cols)
 
   return {
     setCols: cols.join(", "),
