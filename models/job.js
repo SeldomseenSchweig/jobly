@@ -45,6 +45,10 @@ class Job {
             title, salary, equity, company_handle
         ],
     );
+    console.log( "+++++++++++++++++++++++")
+    console.log( result)
+    console.log( "+++++++++++++++++++++++")
+
     const job = result.rows[0];
 
     return job;
@@ -57,7 +61,7 @@ class Job {
 
   static async findAll(query) {
 
-    if(!query){
+    if( query === undefined || Object.keys(query).length === 0){
 
         const jobRes = await db.query(
             `SELECT id, title, salary, equity, company_handle
@@ -186,16 +190,15 @@ return jobRes.rows;
       });
     const idVarIdx = "$" + (values.length + 1);
 
+
     const querySql = `UPDATE jobs 
                       SET ${setCols} 
                       WHERE id = ${idVarIdx} 
                       RETURNING id, title, salary, equity, company_handle`;
     const result = await db.query(querySql, [...values, id]);
-    console.log("+++++++++++++++++++++++++++")
-    console.log(querySql,[...values, id])
-    console.log("+++++++++++++++++++++++++++")
+ 
 
-    
+   
     const job = result.rows[0];
 
     if (!job) throw new NotFoundError(`No job: ${id}`);
@@ -214,6 +217,7 @@ return jobRes.rows;
       `SELECT id, title, salary, equity, company_handle
        FROM jobs
        WHERE id = $1`,[id]);
+
 
     if (!jobRes.rows[0]) throw new NotFoundError(`No job: ${id}`);
 

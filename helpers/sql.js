@@ -42,7 +42,6 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
       // console.log(cols2)
       
   );
-  console.log(cols)
 
   return {
     setCols: cols.join(", "),

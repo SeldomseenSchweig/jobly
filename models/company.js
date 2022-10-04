@@ -51,10 +51,9 @@ class Company {
    * */
 
   static async findAll(query) {
-    console.log(query)
 
 
-    if(Object.keys(query).length === 0){
+    if(query === undefined ||Object.keys(query).length === 0){
       const companiesRes = await db.query(
         `SELECT handle,
                 name,
