@@ -50,7 +50,16 @@ class Company {
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    * */
 
-  static async findAll(query) {
+  static async findAll(query, user) {
+    let appsRes;
+    if(user && !user.isAdmin){
+       appsRes = await db.query(
+        `SELECT job_id
+         FROM applications`);
+         
+    }
+
+    
 
 
     if(query === undefined ||Object.keys(query).length === 0){
@@ -62,12 +71,11 @@ class Company {
                 logo_url AS "logoUrl"
          FROM companies
          ORDER BY name`);
-         return companiesRes.rows;
+         return {companies:companiesRes.rows, apps:appsRes.rows};
 
 
     }
 
-    
     /**  This section iterates through the 
      query-string-variable and creates a string for the
      WHERE secton of the sql query and an array for the 
@@ -123,7 +131,7 @@ if(query.min_employees || query.max_employees){
      WHERE ${cols} 
      ORDER BY name`, values);
     
-return companiesRes.rows;
+return {companies : companiesRes.rows , apps:appsRes.rows};
 
 }else{
 
@@ -136,7 +144,7 @@ const companiesRes = await db.query(
          WHERE ${cols} 
          ORDER BY name`, values);
          
-return companiesRes.rows;
+return {companies : companiesRes.rows , apps:appsRes.rows};
   }
 
 

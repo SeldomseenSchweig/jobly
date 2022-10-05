@@ -309,7 +309,7 @@ test("ok for users", async function () {
   const user = userRes.rows[0]
   const resp = await request(app)
       .post(`/users/${user.username}/jobs/${job.id}`)
-      .set("authorization", `Bearer ${adminToken}`);
+      .set("authorization", `Bearer ${u1Token || adminToken}`);
   expect(resp.statusCode).toEqual(201);
   expect(resp.body).toEqual({applied:job.id });
 

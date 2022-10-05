@@ -54,8 +54,11 @@ router.get("/", async function (req, res, next) {
   try {
     
     
-      const companies = await Company.findAll(req.query);
-      return res.json({ companies });
+      const companies = await Company.findAll(req.query, res.locals);
+      let comps = companies.companies;
+      let apps = companies.apps;
+      
+      return res.json({ apps,comps });
 
     
 
@@ -75,6 +78,7 @@ router.get("/", async function (req, res, next) {
 router.get("/:handle", async function (req, res, next) {
   try {
     const company = await Company.get(req.params.handle);
+    
     return res.json({ company });
   } catch (err) {
     return next(err);

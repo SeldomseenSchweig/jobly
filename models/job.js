@@ -2,7 +2,7 @@
 
 const req = require("express/lib/request");
 const db = require("../db");
-const { BadRequestError, NotFoundError, ExpressError } = require("../expressError");
+const {NotFoundError, ExpressError } = require("../expressError");
 const { sqlForPartialUpdate } = require("../helpers/sql");
 
 /** Related functions for companies. */
@@ -42,6 +42,7 @@ class Job {
    * */
 
   static async findAll(query) {
+
 
     if( query === undefined || Object.keys(query).length === 0){
 

@@ -52,11 +52,25 @@ function ensureAdmin(req, res, next) {
     return next(err);
   }
 }
+function ensureCorrectUserOrAdmin(req, res, next) {
+  try {
+    
+    const user = res.locals.user;
+    if (!(user && (user.isAdmin || user.username === req.params.username))) {
+      throw new UnauthorizedError();
+    }
+    return next();
+  } catch (err) {
+    return next(err);
+  }
+}
+
 
 
 
 
 module.exports = {
+  ensureCorrectUserOrAdmin,
   ensureAdmin,
   authenticateJWT,
   ensureLoggedIn,
