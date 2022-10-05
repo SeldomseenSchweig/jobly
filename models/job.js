@@ -12,29 +12,15 @@ class Job {
    *
    * data should be { id, title, salary, equity, company_handle }
    *
-   * Returns { handle, name, description, numEmployees, logoUrl }
+   * Returns { id, title, salary, equity, company_handle }
    *
    * Throws BadRequestError if job already in database.
    * */
-//    CREATE TABLE jobs (
-//     id SERIAL PRIMARY KEY,
-//     title TEXT NOT NULL,
-//     salary INTEGER CHECK (salary >= 0),
-//     equity NUMERIC CHECK (equity <= 1.0),
-//     company_handle VARCHAR(25) NOT NULL
-//       REFERENCES companies ON DELETE CASCADE
+// 
 //   );
 
   static async create({title, salary, equity, company_handle }) {
-    //  I don't think there has to be a dupe check, there can be more than one job with the same descriptors
-    //  const duplicateCheck = await db.query(
-    //       `SELECT title, salary, equity, company_handle,
-    //        FROM jobs
-    //        WHERE id =$1`,
-    //     [title, salary, equity, company_handle]);
-
-    // if (duplicateCheck.rows[0])
-    //   throw new BadRequestError(`Duplicate job: id ${id}`);
+  
 
     const result = await db.query(
           `INSERT INTO jobs
@@ -192,12 +178,12 @@ return jobRes.rows;
                       WHERE id = ${idVarIdx} 
                       RETURNING id, title, salary, equity, company_handle`;
     const result = await db.query(querySql, [...values, id]);
+    if (!result) throw new NotFoundError(`No job: ${id}`);
  
 
    
     const job = result.rows[0];
 
-    if (!job) throw new NotFoundError(`No job: ${id}`);
 
     return job;
   }

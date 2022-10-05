@@ -85,7 +85,7 @@ router.get("/:username", ensureLoggedIn, async function (req, res, next) {
  *
  * Returns { username, firstName, lastName, email, isAdmin }
  *
- * Authorization required: login
+ * Authorization required: login and admin
  **/
 
 router.patch("/:username", ensureLoggedIn, ensureAdmin, async function (req, res, next) {
@@ -106,16 +106,38 @@ router.patch("/:username", ensureLoggedIn, ensureAdmin, async function (req, res
 
 /** DELETE /[username]  =>  { deleted: username }
  *
- * Authorization required: login
+ * Authorization required: login and admin
  **/
 
-router.delete("/:username", ensureLoggedIn, async function (req, res, next) {
+router.delete("/:username", ensureLoggedIn, ensureAdmin, async function (req, res, next) {
   try {
     await User.remove(req.params.username);
     return res.json({ deleted: req.params.username });
   } catch (err) {
     return next(err);
   }
+});
+
+// Add a route at POST /users/:username/jobs/:id 
+// that allows that user to apply for a job (or an admin to do it for them). 
+//  Return:
+
+// { applied: jobId }
+
+
+
+
+router.post("/:username/jobs/:id", ensureLoggedIn, ensureAdmin, async function (req, res, next) {
+  try {
+    console.log(req.params.username, req.params.id)
+    const application = await User.apply(req.params)
+    return res.status(201).json({applied:Number(req.params.id)});
+
+}catch(err)
+{ 
+  return next(err);
+}
+
 });
 
 

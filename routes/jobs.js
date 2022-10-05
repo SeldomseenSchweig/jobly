@@ -26,10 +26,7 @@ const router = new express.Router();
 
 router.post("/", ensureLoggedIn, ensureAdmin, async function (req, res, next) {
   try {
-    console.log("++++++++++++++++++++++")
-
-    console.log(req)
-    console.log("++++++++++++++++++++++")
+   
 
     const validator = jsonschema.validate(req.body, jobNewSchema);
     if (!validator.valid) {
@@ -104,6 +101,7 @@ router.patch("/:id", ensureLoggedIn, async function (req, res, next) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
     }
+    console.log("hello")
 
     const job = await Job.update(req.params.id, req.body);
     return res.json({ job });

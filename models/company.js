@@ -162,25 +162,22 @@ return companiesRes.rows;
            FROM companies
            WHERE handle = $1`,
         [handle]);
-        console.log("+++++++++++++++++++++++++")
-        console.log("+++++++++++++++++++++++++")
-        console.log(handle)
-        console.log("+++++++++++++++++++++++++")
+
         const jobRes = await db.query(
           `SELECT id,
                   title,
                   equity,
-                  salary,
+                  salary
            FROM jobs
-           WHERE company_handle = $1`
+           WHERE company_handle = $1`,
         [handle]);
 
 
 
     const company = companyRes.rows[0];
-
-
     if (!company) throw new NotFoundError(`No company: ${handle}`);
+
+    company.jobs = jobRes.rows
 
     return company;
   }

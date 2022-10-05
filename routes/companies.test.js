@@ -121,6 +121,12 @@ describe("GET /companies/:handle", function () {
         description: "Desc1",
         numEmployees: 1,
         logoUrl: "http://c1.img",
+        jobs:[{
+          "equity": "0.1",
+          "id": expect.any(Number),
+          "salary": 1000,
+          "title": "j1",
+      },]
       },
     });
   });
@@ -134,12 +140,21 @@ describe("GET /companies/:handle", function () {
         description: "Desc2",
         numEmployees: 2,
         logoUrl: "http://c2.img",
+        jobs:[
+          {
+            "equity": "0.2",
+            "id": expect.any(Number),
+            "salary": 2000,
+            "title": "j2"
+          }]
       },
     });
   });
 
   test("not found for no such company", async function () {
     const resp = await request(app).get(`/companies/nope`);
+
+
     expect(resp.statusCode).toEqual(404);
   });
 });

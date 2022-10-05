@@ -10,6 +10,7 @@ const {
 } = require("../expressError");
 
 const { BCRYPT_WORK_FACTOR } = require("../config.js");
+const res = require("express/lib/response");
 
 /** Related functions for users. */
 
@@ -204,6 +205,26 @@ class User {
 
     if (!user) throw new NotFoundError(`No user: ${username}`);
   }
+
+  /** Applies for jobs.
+   * This method will take an jobId and username, 
+   * insert both and return an object that confirms the
+   * Returns {applies:jobId}
+   **/
+   static async apply(params) {
+     const result = await db.query(
+       `INSERT INTO applications 
+       (username, job_id)
+        VALUES ($1, $2) RETURNING job_id`,
+        [params.username, params.id])
+
+        const app = result.rows[0];
+        if (!app) throw new NotFoundError(`no job id or username error`);
+        return ({applied : params.id })
+        
+   }
+
+
 }
 
 

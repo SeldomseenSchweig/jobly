@@ -3,14 +3,10 @@
     "$id": "http://example.com/example.json",
     "type": "object",
     "default": {},
-    "required": [
-        "title"
-    ],
     "properties": {
         "title": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 30
+            "type": "string"
+
         },
         "salary": {
             "type": "integer"
@@ -21,9 +17,7 @@
  
         },
         "company_handle": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 30
+            "type": "string"
         }
     }
 }

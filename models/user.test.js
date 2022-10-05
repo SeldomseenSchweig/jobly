@@ -228,3 +228,7 @@ describe("remove", function () {
     }
   });
 });
+
+/************************************** apply for job */
+
+

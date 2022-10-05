@@ -145,6 +145,7 @@ describe("GET /jobs/:id", function () {
          FROM jobs`);
       const job = jobRes.rows[0]
     const resp = await request(app).get(`/jobs/${job.id}`);
+
     expect(resp.body).toEqual({
       job: {
         title: job.title,
@@ -177,9 +178,7 @@ describe("PATCH /jobs/:id", function () {
           
         })
         .set("authorization", `Bearer ${adminToken}`);
-        // console.log("++++++++++++++++++++++")
-        // console.log(resp)
-        // console.log("++++++++++++++++++++++")
+
 
     expect(resp.body).toEqual({
       job: {
@@ -272,3 +271,8 @@ describe("DELETE /jobs/:id", function () {
     expect(resp.statusCode).toEqual(404);
   });
 });
+
+
+
+
+

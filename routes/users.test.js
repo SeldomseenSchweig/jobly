@@ -167,6 +167,7 @@ describe("GET /users", function () {
 
 describe("GET /users/:username", function () {
   test("works for users", async function () {
+    
     const resp = await request(app)
         .get(`/users/u1`)
         .set("authorization", `Bearer ${u1Token}`);
@@ -269,10 +270,10 @@ describe("PATCH /users/:username", () => {
 /************************************** DELETE /users/:username */
 
 describe("DELETE /users/:username", function () {
-  test("works for users", async function () {
+  test("works for admin users", async function () {
     const resp = await request(app)
         .delete(`/users/u1`)
-        .set("authorization", `Bearer ${u1Token}`);
+        .set("authorization", `Bearer ${adminToken}`);
     expect(resp.body).toEqual({ deleted: "u1" });
   });
 
@@ -285,7 +286,64 @@ describe("DELETE /users/:username", function () {
   test("not found if user missing", async function () {
     const resp = await request(app)
         .delete(`/users/nope`)
-        .set("authorization", `Bearer ${u1Token}`);
+        .set("authorization", `Bearer ${adminToken}`);
     expect(resp.statusCode).toEqual(404);
   });
 });
+
+
+/************************************** APPLY users/:username/jobs/:id */
+
+describe("POST /:username/jobs/:id", function () {
+
+
+
+test("ok for users", async function () {
+  const jobRes = await db.query(
+    `SELECT *
+     FROM jobs`);
+  const job = jobRes.rows[0]
+  const userRes = await db.query(
+    `SELECT *
+     FROM users`);
+  const user = userRes.rows[0]
+  const resp = await request(app)
+      .post(`/users/${user.username}/jobs/${job.id}`)
+      .set("authorization", `Bearer ${adminToken}`);
+  expect(resp.statusCode).toEqual(201);
+  expect(resp.body).toEqual({applied:job.id });
+
+});
+
+test("unauth for anon", async function () {
+  const jobRes = await db.query(
+    `SELECT *
+     FROM jobs`);
+  const job = jobRes.rows[0]
+  const userRes = await db.query(
+    `SELECT *
+     FROM users`);
+  const user = userRes.rows[0]
+  const resp = await request(app)
+      .post(`/users/${user.username}/jobs/${job.id}`);
+  expect(resp.statusCode).toEqual(401);
+});
+
+test("not found if user missing", async function () {
+  const jobRes = await db.query(
+    `SELECT *
+     FROM jobs`);
+  const job = jobRes.rows[0]
+  const userRes = await db.query(
+    `SELECT *
+     FROM users`);
+     const user = userRes.rows[0]
+
+  const resp = await request(app)
+      .delete(`/users/${user.username}/jobs/${job.id}`)
+      .set("authorization", `Bearer ${adminToken}`);
+  expect(resp.statusCode).toEqual(404);
+});
+
+});
+
