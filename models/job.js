@@ -166,6 +166,7 @@ return jobRes.rows;
    */
 
   static async update(id, data) {
+
      let title
     const { setCols, values } = sqlForPartialUpdate(data,
       {
@@ -179,7 +180,9 @@ return jobRes.rows;
                       WHERE id = ${idVarIdx} 
                       RETURNING id, title, salary, equity, company_handle`;
     const result = await db.query(querySql, [...values, id]);
-    if (!result) throw new NotFoundError(`No job: ${id}`);
+
+
+    if (!result.rows[0]) throw new NotFoundError(`No job: ${id}`);
  
 
    

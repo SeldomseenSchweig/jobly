@@ -54,11 +54,11 @@ router.get("/", async function (req, res, next) {
   try {
     
     
-      const companies = await Company.findAll(req.query, res.locals);
-      let comps = companies.companies;
-      let apps = companies.apps;
+      const companiesRes = await Company.findAll(req.query, res.locals);
+      let companies = companiesRes.companies;
+      let apps = companiesRes.apps;
       
-      return res.json({ apps,comps });
+      return res.json({ apps,companies });
 
     
 

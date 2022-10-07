@@ -70,7 +70,7 @@ describe("GET /companies", function () {
   test("ok for anon", async function () {
     const resp = await request(app).get("/companies");
     expect(resp.body).toEqual({
-      companies:
+      apps:[],companies:
           [
             {
               handle: "c1",
@@ -92,7 +92,7 @@ describe("GET /companies", function () {
               description: "Desc3",
               numEmployees: 3,
               logoUrl: "http://c3.img",
-            },
+            }
           ],
     });
   });

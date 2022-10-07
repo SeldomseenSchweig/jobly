@@ -55,7 +55,8 @@ class Company {
     if(user && !user.isAdmin){
        appsRes = await db.query(
         `SELECT job_id
-         FROM applications`);
+         FROM applications AS a 
+         WHERE username = $1`, [user.username]);
          
     }
 
@@ -71,7 +72,12 @@ class Company {
                 logo_url AS "logoUrl"
          FROM companies
          ORDER BY name`);
-         return {companies:companiesRes.rows, apps:appsRes.rows};
+         if(user == undefined){
+           return companiesRes.rows
+         }else{
+          return {companies:companiesRes.rows, apps:appsRes.rows};
+         }
+        
 
 
     }
