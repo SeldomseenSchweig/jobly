@@ -208,17 +208,21 @@ describe("PATCH /jobs/:id", function () {
     const resp = await request(app)
         .patch(`/jobs/0`)
         .send({
-          name: "new nope",
+          title: "new nope",
         })
         .set("authorization", `Bearer ${adminToken}`);
-    expect(resp.statusCode).toEqual(400);
+    expect(resp.statusCode).toEqual(404);
   });
 
   test("bad request on job change attempt", async function () {
+    const jobRes = await db.query(
+      `SELECT *
+       FROM jobs`);
+    const job = jobRes.rows[0]
     const resp = await request(app)
-        .patch(`/jobs/0`)
+        .patch(`/jobs/${job.id}`)
         .send({
-          handle: "c1-new",
+          company_handle: "c1-new",
         })
         .set("authorization", `Bearer ${adminToken}`);
     expect(resp.statusCode).toEqual(400);

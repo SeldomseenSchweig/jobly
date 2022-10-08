@@ -53,17 +53,22 @@ class Company {
   static async findAll(query, user) {
     let appsRes;
     if(user && !user.isAdmin){
+      console.log(user)
        appsRes = await db.query(
         `SELECT job_id
-         FROM applications AS a 
-         WHERE username = $1`, [user.username]);
+         FROM applications 
+         WHERE username = $1`,[user.user.username] );
+  
+
          
     }
 
+
     
 
-
+    
     if(query === undefined ||Object.keys(query).length === 0){
+     
       const companiesRes = await db.query(
         `SELECT handle,
                 name,

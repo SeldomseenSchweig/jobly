@@ -32,7 +32,7 @@ class UnauthorizedError extends ExpressError {
 
 class BadRequestError extends ExpressError {
   constructor(message = "Bad Request") {
-    super(message, 400);
+    super(message, 401);
   }
 }
 
